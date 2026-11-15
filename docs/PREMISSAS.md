@@ -14,5 +14,9 @@ Cada decisão com o porquê. Atualize sempre que decidir algo.
 | 7b | 2026-11-14 | Limitação aceita: workspace pessoal não tem papéis; compartilhamento é item a item | Suficiente para a demo; em produção seria um workspace compartilhado | |
 | 8 | 2026-11-14 | Acesso ao app restrito a quem tem permissão no item (login obrigatório) | O produto vai receber dados internos com informações pessoais (LGPD) | Acesso anônimo aos arquivos estáticos |
 | 9 | 2026-11-14 | Projeto em `C:\dev\visao-municipal`, fora do OneDrive | Sincronizar `node_modules` no OneDrive deixa a máquina lenta e trava arquivos | Pasta Documentos (sincronizada) |
-| 10 | | (a decidir) Tratamento dos anos sem estimativa populacional | | |
-| 11 | | (a decidir) Tratamento dos códigos `...`, `-`, `X` | | |
+| 10 | 2026-11-15 | Gold usa só os anos presentes nas duas fontes (18 anos: 2002–2006, 2008–2009, 2011–2021) | Série de população consistente (só estimativas); evita saltos artificiais na variação anual | Completar 2010 e 2022 com os Censos (mistura metodologias; fica como evolução futura) |
+| 11 | 2026-11-15 | Códigos especiais do SIDRA: `-` vira 0; `..`, `...` e `X` viram nulo; significado em `status_valor` | Preserva a informação da fonte sem inventar valor | Descartar as linhas na Silver |
+| 12 | 2026-11-15 | Colunas do SIDRA mapeadas pelo cabeçalho (linha 0): D1 = município, D2 = variável, D3 = ano | Não depender da ordem das dimensões, que muda entre tabelas | Posição fixa das colunas |
+| 13 | 2026-11-15 | Lista de anos obtida pela API SIDRA (nível Brasil), não pela API de metadados | `servicodados.ibge.gov.br` não respondeu a partir do Fabric | Lista fixa de anos no código |
+| 14 | 2026-11-15 | Portão de qualidade: com qualquer FAIL, a Gold não é gerada; WARN exige decisão documentada | Evita publicar dado inválido para a diretoria | Só registrar e seguir |
+| 15 | 2026-11-15 | PIB negativo mantido como publicado pelo IBGE; regra V5 vira WARN | É dado oficial (2404507-RN, 2012: −19.046 mil reais); alterar ou excluir seria inventar dado. Medidas de variação e per capita tratam base ≤ 0 | Excluir o registro; forçar zero |
