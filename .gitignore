@@ -1,0 +1,9 @@
+data/
+logs/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+.env
+.env.*
+**/rayfin/.env
