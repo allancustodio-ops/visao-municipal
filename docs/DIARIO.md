@@ -160,3 +160,16 @@ Onde está `HH:MM`, preencha com o horário real.
   publicado no Fabric (item visao-municipal).
 - Lição: em ambiente corporativo, confirmar no primeiro dia que o MFA está configurado
   em um dispositivo disponível durante todo o prazo.
+
+**2026-11-16 HH:MM** · Repensando o painel: de mostrar números a responder perguntas
+- Percebi que quem respondia as perguntas de negócio eram as consultas SQL; o painel só
+  exibia números do PIB.
+- Decisão: levar a lógica das consultas 04 e 01 para medidas DAX (municípios que somam
+  50% do PIB, participação do núcleo nos municípios e na população, posição per capita
+  na UF) e um parâmetro de porte mínimo ajustável pela diretoria.
+- Validação: com 2021 e sem filtros, as medidas deram 87, 1,56% e 36,66%, iguais à SQL 04.
+- Obstáculos: duas medidas coladas juntas no editor; a coluna `par_completo` não era
+  reconhecida; o nome da medida criada pelo parâmetro era diferente do esperado. Resolvi
+  conferindo os nomes no painel de dados.
+- Mapa: Azure Maps (os mapas antigos estão sendo descontinuados), com coordenadas por
+  código IBGE para não errar municípios homônimos (premissa 18).

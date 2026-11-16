@@ -49,6 +49,11 @@ Versão resumida (entregável). O registro completo, com cada tentativa e erro, 
 localmente e foi publicado, mas o conector depende de publicar o modelo, o que o MFA
 impediu. O passo que falta (`npx rayfin connector add`) está descrito no README.
 
+**O que eu repensei:** no fim, percebi que o painel só mostrava números e quem
+respondia as perguntas eram as consultas SQL. Levei essa lógica para medidas DAX, que
+recalculam o núcleo de municípios e os candidatos à expansão conforme os filtros. Com
+2021 e sem filtros, as medidas deram 87, 1,56% e 36,66%, iguais à consulta SQL.
+
 ## 3. Como usei IA generativa e como validei
 
 Usei um assistente de IA como par de trabalho: plano de execução, primeira versão dos

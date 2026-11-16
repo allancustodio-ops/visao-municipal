@@ -73,7 +73,7 @@ npx rayfin up      # publica as alterações
 | Relatório de qualidade | 24 PASS · 7 WARN · 0 FAIL | `docs/relatorio_qualidade.md` |
 | Consultas SQL (CTE + window functions) | Concluído, executadas no ponto de extremidade SQL | `sql/` |
 | Modelo semântico e medidas DAX | Concluído e validado (PIB per capita 2021 = R$ 42.247,52) | `semantic-model/` |
-| Visões da diretoria | Entregues como relatório do Power BI Desktop | `semantic-model/sm_visao_municipal.pbix` (dados em `semantic-model/dados/`) |
+| Visões da diretoria | Relatório do Power BI Desktop com 2 páginas: visão executiva (indicadores, drill-down, mapa e tabela) e Insight (respostas calculadas pelo próprio modelo) | `semantic-model/sm_visao_municipal.pbix` (dados em `semantic-model/dados/`) |
 | Fabric App `visao-municipal` | Criado, executado localmente e publicado; **falta ligar ao modelo** | `app/visao-municipal/` |
 
 ### Por que o app não está ligado ao modelo
@@ -84,6 +84,19 @@ npx rayfin up      # publica as alterações
    acesso ao aplicativo. Sem login, não foi possível publicar o modelo nem rodar o CLI do
    Rayfin. O modelo passou a ler cópias em Excel das tabelas Gold, com a mesma validação
    DAX (premissa 17).
+
+### O que o relatório responde
+
+As consultas SQL descobriram o insight; o relatório passou a calculá-lo sozinho, com
+medidas DAX que respeitam os filtros de ano, região e UF (`semantic-model/medidas.dax`):
+
+| Pergunta de negócio | Medidas | Validação (2021, Brasil) |
+|---|---|---|
+| Onde está concentrado o mercado? | Municípios para 50% do PIB · % dos municípios no núcleo · % da população no núcleo | 87 · 1,56% · 36,66%, iguais à consulta `sql/04_concentracao_pib.sql` |
+| Para onde expandir? | Posição per capita na UF (até 3) · Atende porte mínimo (parâmetro ajustável na segmentação) | Mesmos municípios da consulta `sql/01_ranking_pib_per_capita_uf.sql` |
+
+O mapa usa latitude e longitude de `semantic-model/dados/municipios_coordenadas.xlsx`
+(premissa 18), unidas à dimensão de município no Power Query.
 
 ### Como abrir o relatório do Power BI
 

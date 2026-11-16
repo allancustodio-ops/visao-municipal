@@ -39,3 +39,11 @@ Hierarquia geográfica para drill-down: **região → UF → município** (`nome
 - **Duas unidades de PIB**: `pib_reais` para cálculos e `pib_mil_reais` como vem da fonte.
 - **Portão de qualidade**: a Gold só é gerada se a última execução do 03_qualidade não
   teve FAIL.
+
+## No modelo do Power BI
+
+- `gold_dim_municipio` ganhou `latitude`, `longitude` e `capital`, vindas de
+  `semantic-model/dados/municipios_coordenadas.xlsx` (premissa 18) por mesclagem no
+  Power Query, sem tabela nova nem relacionamento extra.
+- Um parâmetro numérico de porte mínimo (população) alimenta a medida
+  `Atende porte mínimo`, usada na tabela de candidatos à expansão.
