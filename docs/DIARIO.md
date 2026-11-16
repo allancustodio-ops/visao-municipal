@@ -140,8 +140,8 @@ Onde está `HH:MM`, preencha com o horário real.
 - Tentativa: criar um workspace próprio. O tenant bloqueia ("A criação da área de trabalho
   da aplicação está desativada").
 - Decisão: modelo em modo Import pelo Power BI Desktop, conectado ao ponto de extremidade
-  SQL do lake_visao, salvo como projeto PBIP (versionável) e publicado em "A minha área de
-  trabalho" (premissa 16).
+  SQL do lake_visao (premissa 16). Salvo como `.pbix`; o formato PBIP (texto, melhor para
+  versionar) fica como melhoria.
 - Impacto: o modelo guarda uma cópia dos dados e precisa de atualização quando a Gold muda.
   Em um ambiente real, seria Direct Lake num workspace compartilhado, sem cópia.
 

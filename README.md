@@ -73,7 +73,7 @@ npx rayfin up      # publica as alterações
 | Relatório de qualidade | 24 PASS · 7 WARN · 0 FAIL | `docs/relatorio_qualidade.md` |
 | Consultas SQL (CTE + window functions) | Concluído, executadas no ponto de extremidade SQL | `sql/` |
 | Modelo semântico e medidas DAX | Concluído e validado (PIB per capita 2021 = R$ 42.247,52) | `semantic-model/` |
-| Visões da diretoria | Entregues como relatório do Power BI Desktop | `semantic-model/sm_visao_municipal.pbip` |
+| Visões da diretoria | Entregues como relatório do Power BI Desktop | `semantic-model/sm_visao_municipal.pbix` (dados em `semantic-model/dados/`) |
 | Fabric App `visao-municipal` | Criado, executado localmente e publicado; **falta ligar ao modelo** | `app/visao-municipal/` |
 
 ### Por que o app não está ligado ao modelo
@@ -84,6 +84,14 @@ npx rayfin up      # publica as alterações
    acesso ao aplicativo. Sem login, não foi possível publicar o modelo nem rodar o CLI do
    Rayfin. O modelo passou a ler cópias em Excel das tabelas Gold, com a mesma validação
    DAX (premissa 17).
+
+### Como abrir o relatório do Power BI
+
+Abra `semantic-model/sm_visao_municipal.pbix`. Os dados vêm dos arquivos Excel em
+`semantic-model/dados/` (cópias das tabelas Gold). O Power BI guarda o caminho completo
+dos arquivos: se o repositório estiver em outra pasta que não `C:\dev\visao-municipal`,
+use **Transformar dados → Definições da origem de dados → Alterar origem** e aponte para
+os arquivos de `semantic-model/dados/`.
 
 ### Como completar o app quando o acesso voltar
 
