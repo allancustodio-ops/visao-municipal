@@ -7,3 +7,5 @@ node_modules/
 .env
 .env.*
 **/rayfin/.env
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

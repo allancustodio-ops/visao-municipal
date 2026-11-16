@@ -65,6 +65,52 @@ npm run dev        # testa localmente em http://localhost:5173
 npx rayfin up      # publica as alterações
 ```
 
+## Estado da entrega e próximos passos
+
+| Componente | Estado | Onde |
+|---|---|---|
+| Bronze, Silver, Qualidade e Gold | Concluído e validado no Fabric | `pipeline/fabric/01` a `04`, Lakehouse `lake_visao` |
+| Relatório de qualidade | 24 PASS · 7 WARN · 0 FAIL | `docs/relatorio_qualidade.md` |
+| Consultas SQL (CTE + window functions) | Concluído, executadas no ponto de extremidade SQL | `sql/` |
+| Modelo semântico e medidas DAX | Concluído e validado (PIB per capita 2021 = R$ 42.247,52) | `semantic-model/` |
+| Visões da diretoria | Entregues como relatório do Power BI Desktop | `semantic-model/sm_visao_municipal.pbip` |
+| Fabric App `visao-municipal` | Criado, executado localmente e publicado; **falta ligar ao modelo** | `app/visao-municipal/` |
+
+### Por que o app não está ligado ao modelo
+
+1. O tenant não permite modelo Direct Lake em "A minha área de trabalho" nem a criação de
+   workspaces; o modelo foi feito em modo Import no Power BI Desktop (premissa 16).
+2. Na reta final, a conta corporativa passou a exigir MFA (Microsoft Authenticator) sem
+   acesso ao aplicativo. Sem login, não foi possível publicar o modelo nem rodar o CLI do
+   Rayfin. O modelo passou a ler cópias em Excel das tabelas Gold, com a mesma validação
+   DAX (premissa 17).
+
+### Como completar o app quando o acesso voltar
+
+1. **Voltar o modelo para o Lakehouse:** no Power BI Desktop, em Transformar dados →
+   Definições da origem de dados, trocar os arquivos Excel pelo ponto de extremidade SQL
+   do `lake_visao`. Rodar a consulta DAX de validação (`semantic-model/medidas.dax`):
+   2021 deve dar 42.247,52.
+2. **Publicar** o `sm_visao_municipal` em "A minha área de trabalho".
+3. **Ligar o app ao modelo** (a partir de `app/visao-municipal`):
+   ```bash
+   # ID do workspace: está em rayfin/.env (gerado pelo npx rayfin up)
+   npx rayfin connector search --workspace-id <ID_WORKSPACE> --type fabric-semanticmodel --json
+   npx rayfin connector add --type fabric-semanticmodel --workspace-id <ID_WORKSPACE> \
+       --item-id <ID_DO_MODELO> --name panoramaModel --operations executeQuery
+   ```
+4. **Montar as telas** reaproveitando as consultas DAX já validadas:
+   - KPIs: `[PIB (R$)]`, `[População]`, `[PIB per capita (R$)]`, `[Variação PIB YoY %]`,
+     `[Municípios]`, filtrados por ano e UF;
+   - gráfico com drill-down pela hierarquia Geografia (região → UF → município);
+   - tabela detalhada por município;
+   - card com o insight da consulta `sql/04_concentracao_pib.sql`.
+5. Testar com `npm run dev` e publicar com `npx rayfin up`. Abrir sempre pelo item
+   `visao-municipal` no workspace (a URL direta não autentica).
+
+Estimativa: menos de 1 hora para os passos 1 a 3; as telas reaproveitam o layout do
+relatório do Power BI.
+
 ## Local × Fabric
 
 | Aspecto | Local | Fabric |

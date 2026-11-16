@@ -1,0 +1,86 @@
+// Modelo semântico: sm_visao_municipal (Direct Lake sobre o lake_visao)
+// Tabelas: gold_fato_municipio_ano, gold_dim_municipio, gold_dim_tempo
+// Relacionamentos (1:N, filtro em direção única):
+//   gold_dim_municipio[cod_municipio] -> gold_fato_municipio_ano[cod_municipio]
+//   gold_dim_tempo[ano]               -> gold_fato_municipio_ano[ano]
+// Hierarquia "Geografia" em gold_dim_municipio: nome_regiao > sigla_uf > municipio_uf
+
+// ---------------------------------------------------------------------------
+// Medidas base
+// ---------------------------------------------------------------------------
+
+PIB (R$) =
+SUM ( gold_fato_municipio_ano[pib_reais] )
+// Formato: moeda, sem casas decimais
+
+População =
+SUM ( gold_fato_municipio_ano[populacao] )
+// Formato: número inteiro com separador de milhar
+
+// ---------------------------------------------------------------------------
+// Medida não trivial 1: PIB per capita
+// Razão de somas no contexto do filtro, nunca média dos per capita municipais.
+// Usa só as linhas com população E PIB (par_completo), para que numerador e
+// denominador cubram os mesmos municípios (premissa 10, regra I6 da qualidade).
+// ---------------------------------------------------------------------------
+
+PIB per capita (R$) =
+VAR PibBase =
+    CALCULATE ( [PIB (R$)], gold_fato_municipio_ano[par_completo] = TRUE () )
+VAR PopBase =
+    CALCULATE ( [População], gold_fato_municipio_ano[par_completo] = TRUE () )
+RETURN
+    DIVIDE ( PibBase, PopBase )
+// Formato: moeda, 2 casas decimais
+
+// ---------------------------------------------------------------------------
+// Medida não trivial 2: variação do PIB em relação ao ano anterior (YoY)
+// - Só faz sentido com um único ano no contexto.
+// - A série não tem 2007 e 2010: para 2008 e 2011 o "ano anterior" não existe
+//   na dimensão de tempo, então o resultado fica vazio (e não compara com 2 anos antes).
+// - Base <= 0 (Guamaré-RN 2012, premissa 15) devolve vazio.
+// ---------------------------------------------------------------------------
+
+Variação PIB YoY % =
+VAR AnoAtual = SELECTEDVALUE ( gold_dim_tempo[ano] )
+VAR PibAtual = [PIB (R$)]
+VAR PibAnterior =
+    CALCULATE (
+        [PIB (R$)],
+        REMOVEFILTERS ( gold_dim_tempo ),
+        gold_dim_tempo[ano] = AnoAtual - 1
+    )
+RETURN
+    IF (
+        NOT ISBLANK ( AnoAtual ) && PibAnterior > 0,
+        DIVIDE ( PibAtual - PibAnterior, PibAnterior )
+    )
+// Formato: percentual, 1 casa decimal
+
+// ---------------------------------------------------------------------------
+// Apoio ao app
+// ---------------------------------------------------------------------------
+
+Participação no PIB do Brasil % =
+DIVIDE ( [PIB (R$)], CALCULATE ( [PIB (R$)], REMOVEFILTERS ( gold_dim_municipio ) ) )
+// Formato: percentual, 2 casas decimais
+
+Municípios =
+CALCULATE (
+    DISTINCTCOUNT ( gold_fato_municipio_ano[cod_municipio] ),
+    gold_fato_municipio_ano[par_completo] = TRUE ()
+)
+
+// ---------------------------------------------------------------------------
+// Validação: consulta DAX (visualização de consultas DAX do modelo).
+// PIB per capita 2021 deve ser 42.247,52, igual à última célula do 04_gold.
+// ---------------------------------------------------------------------------
+// EVALUATE
+// SUMMARIZECOLUMNS (
+//     gold_dim_tempo[ano],
+//     "PIB (R$)", [PIB (R$)],
+//     "População", [População],
+//     "PIB per capita (R$)", [PIB per capita (R$)],
+//     "Variação PIB YoY %", [Variação PIB YoY %]
+// )
+// ORDER BY gold_dim_tempo[ano]

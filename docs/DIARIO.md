@@ -133,3 +133,30 @@ Onde está `HH:MM`, preencha com o horário real.
   - O ano mais recente com as duas informações é **2021**.
   - Um município a mais na população do que no PIB.
 - Salvei no repositório a versão do notebook baixada do Fabric (a que realmente rodou).
+
+**2026-11-15 HH:MM** · Obstáculo: modelo Direct Lake sem workspace de destino
+- Sintoma: em "Novo modelo semântico" no lake_visao, o botão Confirmar ficava desabilitado
+  e o campo de área de trabalho pedia para criar uma primeiro.
+- Tentativa: criar um workspace próprio. O tenant bloqueia ("A criação da área de trabalho
+  da aplicação está desativada").
+- Decisão: modelo em modo Import pelo Power BI Desktop, conectado ao ponto de extremidade
+  SQL do lake_visao, salvo como projeto PBIP (versionável) e publicado em "A minha área de
+  trabalho" (premissa 16).
+- Impacto: o modelo guarda uma cópia dos dados e precisa de atualização quando a Gold muda.
+  Em um ambiente real, seria Direct Lake num workspace compartilhado, sem cópia.
+
+**2026-11-15 HH:MM** · Bloqueio: autenticação multifator (MFA) na conta corporativa
+- Sintoma: ao entrar com a conta da empresa, foi exigido um código do Microsoft
+  Authenticator, ao qual eu não tinha acesso no momento.
+- Impacto: sem login, não consigo publicar o modelo semântico, rodar `npx rayfin` nem
+  acessar o Lakehouse.
+- Decisão (prazo de entrega): exportei as tabelas Gold para Excel e conectei o Power BI
+  Desktop a esses arquivos, mantendo o mesmo modelo (relacionamentos, hierarquia e
+  medidas). As visões pedidas para o app foram montadas como relatório do Power BI.
+- Validação: depois da troca de fonte, a consulta DAX de validação precisa continuar
+  dando PIB per capita 2021 = 42.247,52.
+- O que fica pendente: publicar o modelo e ligar o Fabric App via conector
+  (`npx rayfin connector add`), assim que o MFA for regularizado. O app já está criado e
+  publicado no Fabric (item visao-municipal).
+- Lição: em ambiente corporativo, confirmar no primeiro dia que o MFA está configurado
+  em um dispositivo disponível durante todo o prazo.
